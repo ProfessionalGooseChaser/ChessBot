@@ -2,9 +2,8 @@
 # i ilike chess
 #i have plenty of data
 #and i can train it myself by having it make a move and seeing if i'd play said move
-from contextlib import nullcontext
-from typing_extensions import Self
-import tensorflow as tf
+#from contextlib import nullcontext
+#import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -57,17 +56,17 @@ class piece():
         return 0
 
     def Move(self, RC):
-        if(board[RC[0], RC[1]].piece != None):
-            del board[RC[0], RC[1]].piece # does this do what I think it does?
-        board[RC[0], RC[1]] = Self
-        board[self.tile.row, self.tile.col] = None
-        self.tile = board[RC[0], RC[1]]
+        if(board[RC[0]][RC[1]].piece != None):
+            del board[RC[0]][RC[1]].piece # does this do what I think it does? - It defintely doesn't
+        #board[RC[0], RC[1]] = Self
+        board[self.tile.row][self.tile.col] = None
+        self.tile = board[RC[0]][RC[1]]
 
 
 
     #do i need a parent class function of findMoves? no but a parent of Move is nice so I put one in
 
-class pawn(piece):
+class Pawn(piece):
     def __init__(self, tile, color, moves):
         super().__init__(tile, color, moves)
         self.worth = 1
@@ -79,51 +78,53 @@ class pawn(piece):
         r = self.tile.row
         c = self.tile.col
         if(self.color):
-            if(not self.hasMoved and board[r + 2, c].piece == None and board[r + 1, c].piece == None):
-                self.moves.append((r + 1, c)) #can it move two squares ahead
+            if(not self.hasMoved and board[r + 2][c].piece == None and board[r + 1][c].piece == None):
+                self.moves.append((r + 2, c)) #can it move two squares ahead
+                self.moves.append((r+1, c)) #can it move one square ahead
 
-            if(board[r + 1, c].piece == None):
+            elif(board[r + 1][c].piece == None):
                 self.moves.append((r, c+1)) #can it move one square ahead
 
-            if(c-1 >= 0 and board[r + 1, c -1].piece != None and board[r + 1, c - 1].piece.color != self.color):
+            if(c-1 >= 0 and board[r + 1][c -1].piece != None and board[r + 1][c - 1].piece.color != self.color):
                 self.moves.append((r + 1, c - 1)) #taking to the left
 
-            if(c + 1 < 8 and board[r+1, c+1].piece != None and board[r+1, c+1].piece.color != self.color):
+            if(c + 1 < 8 and board[r+1][c+1].piece != None and board[r+1][c+1].piece.color != self.color):
                 self.moves.append((r+1, c+1)) #taking to the right
 
-            if(c-1 >= 0 and board[r+1, c-1].piece.enPassant):
+            if(c-1 >= 0 and board[r][c-1].piece != None and board[r][c-1].piece.color != self.color and type(board[r][c-1].piece) == Pawn and board[r][c-1].piece.enPassant):
                 self.moves.append((r + 1, c - 1)) #taking en Passant to the left
 
-            if(c+1 < 8 and board[r+1, c+1].piece.enPassant):
+            if(c+1 < 8 and board[r][c+1].piece != None and board[r][c+1].piece.color != self.color and type(board[r][c+1].piece) == Pawn and board[r][c+1].piece.enPassant):
                 self.moves.append((r+1, c+1)) #taking to the right
 
         else:
 
-            if(not self.hasMoved and board[r-2, c].piece == None and board[r-1, c].piece == None):
+            if(not self.hasMoved and board[r-2][c].piece == None and board[r-1][c].piece == None):
                 self.moves.append((r-2, c)) #can it move two squares ahead
-
-            if(board[r - 1, c].piece == None):
                 self.moves.append((r - 1, c)) #can it move one square ahead
 
-            if(c-1 >= 0 and board[r - 1, c -1].piece != None and board[r - 1, c-1].piece.color != self.color):
+            elif(board[r - 1][c].piece == None):
+                self.moves.append((r - 1, c)) #can it move one square ahead
+
+            if(c-1 >= 0 and board[r - 1][c -1].piece != None and board[r - 1][c-1].piece.color != self.color):
                 self.moves.append((r - 1, c - 1)) #taking to the left
 
-            if(c + 1 < 8 and board[r-1, c+1].piece != None and board[r-1, c-1].piece.color != self.color):
+            if(c + 1 < 8 and board[r-1][c+1].piece != None and board[r-1][c-1].piece.color != self.color):
                 self.moves.append((r-1, c+1)) #taking to the right
 
-            if(c-1 >= 0 and board[r-1, c-1].piece.enPassant):
+            if(c-1 >= 0 and board[r][c-1].piece != None and board[r][c-1].piece.color != self.color and type(board[r][c-1].piece) == Pawn and board[r-1][c-1].piece.enPassant):
                 self.moves.append((r-1, c - 1)) #taking en Passant to the left
 
-            if(c+1 < 8 and board[r-1, c+1].piece.enPassant):
+            if(c+1 < 8 and board[r][c+1].piece != None and board[r][c+1].piece.color != self.color and type(board[r][c+1].piece) == Pawn and board[r-1][c+1].piece.enPassant):
                 self.moves.append((r-1, c+1)) #taking to the right
 
     def Move(self, RC):
-        board[RC[0], RC[1]] = Self
+        #board[RC[0]][RC[1]] = Self
         if(self.color and RC[0] == 7):
             self.promote("Congrats on making it to the end of the board. ")
         if(not self.color and RC[0] == 0):
             self.promote("Congrarts on making it to the end of the board. ")
-        board[self.tile.row, self.tile.col] = None
+        board[self.tile.row][self.tile.col] = None
     
     def promote(self, err):
         var = input(err + 'What would you like to promote your pawn to? (K, B, R, Q)')
@@ -151,59 +152,59 @@ class Knight(piece):
         if (c-2 >= 0):
             if(r - 2 >= 0):
                 # (-2, -1) and (-1, -2) are on the board
-                if(board[r-2, c-1].piece == None or board[r-2, c-1].piece.color != self.color):
+                if(board[r-2][c-1].piece == None or board[r-2][c-1].piece.color != self.color):
                     self.moves.append((r-2, c-1)) #(-2, -1)
-                if(board[r-1, c-2].piece == None or board[r-1, c-2].piece.color != self.color):
+                if(board[r-1][c-2].piece == None or board[r-1][c-2].piece.color != self.color):
                     self.moves.append((r-1, c-2)) #(-1, -2)
             elif(r-1 >=0):
                 #Only (-1, -2) is on the board
-                if(board[r-1, c-2].piece == None or board[r-1, c-2].piece.color != self.color):
+                if(board[r-1][c-2].piece == None or board[r-1][c-2].piece.color != self.color):
                     self.moves.append((r-1, c-2))
             if(r+2 <8):
                 # (+1, -2) and (+2, -1) are available
-                if(board[r+2, c-1].piece == None or board[r+2, c-1].piece.color != self.color):
+                if(board[r+2][c-1].piece == None or board[r+2][c-1].piece.color != self.color):
                     self.moves.append((r+2, c-1)) #(+2, -1)
-                if(board[r+1, c-2].piece == None or board[r+1, c-2].piece.color != self.color):
+                if(board[r+1][c-2].piece == None or board[r+1][c-2].piece.color != self.color):
                     self.moves.append((r+1, c-2)) #(+1, -2)
             elif(r+1<8):
                 # Only (+1, -2) is there
-                if(board[r+1, c-2].piece == None or board[r+1, c-2].piece.color != self.color):
+                if(board[r+1][c-2].piece == None or board[r+1][c-2].piece.color != self.color):
                     self.moves.append((r+1, c-2))
         elif (c-1 >= 0):
             if(r-2 >= 0): #only need to look at when r is +- 2
-                if(board[r-2, c-1].piece == None or board[r-2, c-1].piece.color != self.color):
+                if(board[r-2][c-1].piece == None or board[r-2][c-1].piece.color != self.color):
                     self.moves.append((r-2, c-1)) #(-2, -1)
             if(r+2< 8):
-                if(board[r+2, c-1].piece == None or board[r+2, c-1].piece.color != self.color):
+                if(board[r+2][c-1].piece == None or board[r+2][c-1].piece.color != self.color):
                     self.moves.append((r+2, c-1)) #(+2, -1)  
 
         if (c+2 < 8):
             if(r - 2 >= 0):
                 # (-2, +1) and (-1, +2) are on the board
-                if(board[r-2, c+1].piece == None or board[r-2, c+1].piece.color != self.color):
-                    self.moves.append((r-2, c-1)) #(-2, +1)
-                if(board[r-1, c+2].piece == None or board[r-1, c+2].piece.color != self.color):
+                if(board[r-2][c+1].piece == None or board[r-2][c+1].piece.color != self.color):
+                    self.moves.append((r-2, c+1)) #(-2, +1)
+                if(board[r-1][c+2].piece == None or board[r-1][c+2].piece.color != self.color):
                     self.moves.append((r-1, c+2)) #(-1, +2)
             elif(r-1 >=0):
                 #Only (-1, +2) is on the board
-                if(board[r-1, c+2].piece == None or board[r-1, c+2].piece.color != self.color):
+                if(board[r-1][c+2].piece == None or board[r-1][c+2].piece.color != self.color):
                     self.moves.append((r-1, c+2))
             if(r+2 <8):
                 # (+1, +2) and (+2, +1) are available
-                if(board[r+2, c+1].piece == None or board[r+2, c+1].piece.color != self.color):
+                if(board[r+2][c+1].piece == None or board[r+2][c+1].piece.color != self.color):
                     self.moves.append((r+2, c+1)) #(+2, +1)
-                if(board[r+1, c+2].piece == None or board[r+1, c+2].piece.color != self.color):
+                if(board[r+1][c+2].piece == None or board[r+1, c+2].piece.color != self.color):
                     self.moves.append((r+1, c+2)) #(+1, +2)
             elif(r+1<8):
                 # Only (+1, +2) is there
-                if(board[r+1, c+2].piece == None or board[r+1, c+2].piece.color != self.color):
+                if(board[r+1][c+2].piece == None or board[r+1][c+2].piece.color != self.color):
                     self.moves.append((r+1, c+2))
         elif (c + 1<8):
             if(r-2 >= 0): #only need to look at when r is +- 2
-                if(board[r-2, c+1].piece == None or board[r-2, c+1].piece.color != self.color):
+                if(board[r-2][c+1].piece == None or board[r-2][c+1].piece.color != self.color):
                     self.moves.append((r-2, c+1)) #(-2, +1)
             if(r+2< 8):
-                if(board[r+2, c+1].piece == None or board[r+2, c+1].piece.color != self.color):
+                if(board[r+2][c+1].piece == None or board[r+2][c+1].piece.color != self.color):
                     self.moves.append((r+2, c-1)) #(+2, +1)
 
 
@@ -213,6 +214,10 @@ class Bishop(piece):
         super().__init__(tile, color, moves)
         self.worth = 3
         self.name = "bishop"
+    
+    def find_Moves(self):
+        r = self.tile.row
+        c = self.tile.col
 
 class Rook(piece):
     def __init__(self, tile, color, moves):
@@ -220,6 +225,17 @@ class Rook(piece):
         self.worth = 5
         self.hasMoved = False
         self.name = "rook"
+
+    def find_Moves(self):
+        #castling is a function of the king, so when I use the this function with the queen, the queen doesn't castle with the queen)
+        r = self.tile.row
+        c = self.tile.col
+        #NE ++
+
+        #NW +-
+        #SE -+
+        #SW --
+
 
 class Queen(Bishop, Rook):
     def __init__(self, tile, color, moves):
@@ -244,9 +260,17 @@ board = []
 for i in range(8):
     row = []
     for j in range(8):
-        temp = tile(None, j, i)
+        temp = tile(None, i, j)
         row.append(temp)
     board.append(row)
+
+#testing
+board[3][4].piece = Knight(board[3][4], True, [])
+board[2][3].piece = Pawn(board[2][3], True, [])
+board[3][4].piece.find_Moves()
+board[2][3].piece.find_Moves()
+print("\n" * 5)
+print(board[2][3].piece.moves)
 
 #new game (creates all the pieces in they're correct spots)
 #turn (recursive function called in play game)
