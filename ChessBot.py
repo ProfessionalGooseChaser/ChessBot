@@ -218,6 +218,55 @@ class Bishop(piece):
     def find_Moves(self):
         r = self.tile.row
         c = self.tile.col
+        if(r>c):
+            high = r
+            low = c
+        else:
+            high = c
+            low = r
+
+        #NE ++
+        for NE in range(1, 8-high):
+            if(board[r + NE][c + NE].piece == None):
+                self.moves.append((r + NE, c + NE))
+            elif(board[r + NE][c + NE].piece.color != self.color):
+                self.moves.append((r + NE, c + NE))
+                break
+            else:
+                break
+                
+
+        #NW +-
+        for NW in range(1, 8-high):
+            if(board[r + NW][c - NW].piece == None):
+                self.moves.append((r + NE, c - NE))
+            elif(board[r + NW][c - NW].piece.color != self.color):
+                self.moves.append((r + NE, c - NE))
+                break
+            else:
+                break
+
+        #SE -+
+        for SE in range(1, 8-high):
+            if(board[r - SE][c + SE].piece == None):
+                self.moves.append((r - SE, c + SE))
+            elif(board[r - SE][c + SE].piece.color != self.color):
+                self.moves.append((r - SE, c +SE))
+                break
+            else:
+                break
+
+        #SW --
+        for SW in range(1, 8-low):
+            if(board[r - SW][c - SW].piece == None):
+                self.moves.append((r-NE, c-NE))
+            elif(board[r - SW][c - SW].piece.color != self.color):
+                self.moves.append((r - SW, c - SW))
+                break
+            else:
+                break
+
+
 
 class Rook(piece):
     def __init__(self, tile, color, moves):
@@ -230,11 +279,44 @@ class Rook(piece):
         #castling is a function of the king, so when I use the this function with the queen, the queen doesn't castle with the queen)
         r = self.tile.row
         c = self.tile.col
-        #NE ++
 
-        #NW +-
-        #SE -+
-        #SW --
+        #N
+        for N in range(1, 8-r):
+            if(board[r+N][c].piece == None):
+                self.moves.append((r+N, c))
+            elif(board[r+N][c].piece.color != self.color):
+                self.moves.append((r+N, c))
+                break
+            else:
+                break
+        
+        for S in range(1, 1+ r):
+            if(board[r-S][c].piece == None):
+                self.moves.append((r-S, c))
+            elif(board[r-S][c].piece.color != self.color):
+                self.moves.append((r-S, c))
+                break
+            else:
+                break
+
+        for E in range(1, 8-c):
+            if(board[r][c + E].piece == None):
+                self.moves.append((r, c + E))
+            elif(board[r][c+E].piece.color != self.color):
+                self.moves.append((r, c+E))
+                break
+            else:
+                break
+
+        for W in range(1, 1+ c):
+            if(board[r][c - W].piece == None):
+                self.moves.append((r, c - W))
+            elif(board[r][c-W].piece.color != self.color):
+                self.moves.append((r, c-W))
+                break
+            else:
+                break
+
 
 
 class Queen(Bishop, Rook):
@@ -265,12 +347,12 @@ for i in range(8):
     board.append(row)
 
 #testing
-board[3][4].piece = Knight(board[3][4], True, [])
-board[2][3].piece = Pawn(board[2][3], True, [])
-board[3][4].piece.find_Moves()
-board[2][3].piece.find_Moves()
+board[6][3].piece = Knight(board[6][3], False, [])
+board[3][1].piece = Pawn(board[3][1], True, [])
+board[6][1].piece = Rook(board[6][1], False, [])
+board[6][1].piece.find_Moves()
 print("\n" * 5)
-print(board[2][3].piece.moves)
+print(board[6][1].piece.moves)
 
 #new game (creates all the pieces in they're correct spots)
 #turn (recursive function called in play game)
