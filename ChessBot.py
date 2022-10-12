@@ -218,50 +218,49 @@ class Bishop(piece):
     def find_Moves(self):
         r = self.tile.row
         c = self.tile.col
-        if(r>c):
-            high = r
-            low = c
-        else:
-            high = c
-            low = r
+        N = 8 - c
+        S = c + 1
+        E = 8 - r
+        W = r + 1
 
         #NE ++
-        for NE in range(1, 8-high):
-            if(board[r + NE][c + NE].piece == None):
-                self.moves.append((r + NE, c + NE))
-            elif(board[r + NE][c + NE].piece.color != self.color):
-                self.moves.append((r + NE, c + NE))
-                break
-            else:
-                break
-                
-
-        #NW +-
-        for NW in range(1, 8-high):
-            if(board[r + NW][c - NW].piece == None):
-                self.moves.append((r + NE, c - NE))
-            elif(board[r + NW][c - NW].piece.color != self.color):
-                self.moves.append((r + NE, c - NE))
+        for NE in range(1, min(N, E)):
+            if(board[r+NE][c+NE].piece == None):
+                self.moves.append((r+NE, c+NE))
+            elif(board[r+NE][c+NE].piece.color != self.color):
+                self.moves.append((r+NE, c+NE))
                 break
             else:
                 break
 
-        #SE -+
-        for SE in range(1, 8-high):
-            if(board[r - SE][c + SE].piece == None):
-                self.moves.append((r - SE, c + SE))
-            elif(board[r - SE][c + SE].piece.color != self.color):
-                self.moves.append((r - SE, c +SE))
+        #NW -+
+        for NW in range(1, min(N, W)):
+
+            if(board[r-NW][c+NW].piece == None):
+                self.moves.append((r-NW, c+NW))
+            elif(board[r-NW][c+NW].piece.color != self.color):
+                self.moves.append((r-NW, c+NW))
                 break
             else:
                 break
 
         #SW --
-        for SW in range(1, 8-low):
-            if(board[r - SW][c - SW].piece == None):
-                self.moves.append((r-NE, c-NE))
-            elif(board[r - SW][c - SW].piece.color != self.color):
-                self.moves.append((r - SW, c - SW))
+        for SW in range(1, min(S, W)):
+            if(board[r-SW][c-SW].piece == None):
+                self.moves.append((r-SW, c-SW))
+            elif(board[r-SW][c-SW].piece.color != self.color):
+                self.moves.append((r-SW, c-SW))
+                break
+            else:
+                break
+
+        #SE +-
+        for SE in range(1, min(S, E)):
+            
+            if(board[r+SE][c-SE].piece == None):
+                self.moves.append((r+SE, c-SE))
+            elif(board[r+SE][c-SE].piece.color != self.color):
+                self.moves.append((r+SE, c-SE))
                 break
             else:
                 break
@@ -325,6 +324,12 @@ class Queen(Bishop, Rook):
         self.worth = 9
         self.name = "queen"
 
+    def find_Moves(self):
+        return super().find_Moves()
+
+
+
+
 class King(piece):
     def __init__(self, tile, color, moves):
         super().__init__(tile, color, moves)
@@ -349,10 +354,10 @@ for i in range(8):
 #testing
 board[6][3].piece = Knight(board[6][3], False, [])
 board[3][1].piece = Pawn(board[3][1], True, [])
-board[6][1].piece = Rook(board[6][1], False, [])
-board[6][1].piece.find_Moves()
+board[2][6].piece = Queen(board[2][6], False, [])
+board[2][6].piece.find_Moves()
 print("\n" * 5)
-print(board[6][1].piece.moves)
+print(board[2][6].piece.moves)
 
 #new game (creates all the pieces in they're correct spots)
 #turn (recursive function called in play game)
