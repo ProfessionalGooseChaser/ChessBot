@@ -336,9 +336,43 @@ class King(piece):
         self.hasMoved = False
         self.inCheck = False
         self.name = "king"
-            
-            
+    
+    def in_check(self, tileXY):
+        
+        return False
 
+    def find_Moves(self):
+        r = self.tile.row
+        c = self.tile.col
+
+        #cardinal directions
+        #E
+        if(r + 1 < 8 and not self.in_check((r+1, c)) and board[r+1][c].piece == None or board[r+1][c].piece.color != self.color):
+            self.moves.append((r+1, c)) 
+        #W
+        if(r - 1 >= 0 and not self.in_check((r-1, c)) and board[r-1][c].piece == None or board[r-1][c].piece.color != self.color):
+            self.moves.append((r-1, c)) 
+        #N
+        if(c + 1 < 8 and not self.in_check((r, c+1)) and board[r][c+1].piece == None or board[r][c+1].piece.color != self.color):
+            self.moves.append((r, c+1)) 
+        #S
+        if(c - 1 >= 0 and not self.in_check((r, c-1)) and board[r][c-1].piece == None or board[r][c-1].piece.color != self.color):
+            self.moves.append((r, c-1)) 
+        
+        #corners
+        #NE
+        if(r + 1 < 8 and c + 1 < 8 and not self.in_check((r+1, c+1)) and board[r+1][c+1].piece == None or board[r+1][c+1].piece.color != self.color):
+            self.moves.append((r+1, c+1))
+        #SE
+        if(r + 1 < 8 and c - 1 >=0 and not self.in_check((r+1, c-1)) and board[r+1][c-1].piece == None or board[r+1][c-1].piece.color != self.color):
+            self.moves.append((r+1, c-1))
+        #NW
+        if(r - 1 >= 0 and c + 1 < 8 and not self.in_check((r-1, c+1)) and board[r-1][c+1].piece == None or board[r-1][c+1].piece.color != self.color):
+            self.moves.append((r-1, c+1))
+        #SW
+        if(r - 1 >= 0 and c - 1 >= 0 and not self.in_check((r-1, c-1)) and board[r-1][c-1].piece == None or board[r-1][c-1].piece.color != self.color):
+            self.moves.append((r-1, c-1))    
+        
         
 
 
