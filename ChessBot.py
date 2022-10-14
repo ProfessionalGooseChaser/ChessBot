@@ -36,13 +36,15 @@ class piece():
         self.worth = 0
         self.moves = []
         self.name = ""
+        self.id = ""
 
 
-    def __init__(self, tile, color, moves):
+    def __init__(self, tile, color, moves, id):
         self.tile = tile
         self.color = color
         self.moves = moves
         self.name = "piece"
+        self.id = id
 
     def __str__(self):
         clr = ""
@@ -67,8 +69,8 @@ class piece():
     #do i need a parent class function of findMoves? no but a parent of Move is nice so I put one in
 
 class Pawn(piece):
-    def __init__(self, tile, color, moves):
-        super().__init__(tile, color, moves)
+    def __init__(self, tile, color, moves, id):
+        super().__init__(tile, color, moves, id)
         self.worth = 1
         self.hasMoved = False
         self.enPassant = False
@@ -140,8 +142,8 @@ class Pawn(piece):
             self.promote("Looks like that's an invalid piece. Try again. ")
         
 class Knight(piece):
-    def __init__(self, tile, color, moves):
-        super().__init__(tile, color, moves)
+    def __init__(self, tile, color, moves, id):
+        super().__init__(tile, color, moves, id)
         self.worth = 3
         self.name = "knight"
 
@@ -210,8 +212,8 @@ class Knight(piece):
 
 
 class Bishop(piece):
-    def __init__(self, tile, color, moves):
-        super().__init__(tile, color, moves)
+    def __init__(self, tile, color, moves, id):
+        super().__init__(tile, color, moves, id)
         self.worth = 3
         self.name = "bishop"
     
@@ -268,8 +270,8 @@ class Bishop(piece):
 
 
 class Rook(piece):
-    def __init__(self, tile, color, moves):
-        super().__init__(tile, color, moves)
+    def __init__(self, tile, color, moves, id):
+        super().__init__(tile, color, moves, id)
         self.worth = 5
         self.hasMoved = False
         self.name = "rook"
@@ -319,26 +321,33 @@ class Rook(piece):
 
 
 class Queen(Bishop, Rook):
-    def __init__(self, tile, color, moves):
-        super().__init__(tile, color, moves)
+    def __init__(self, tile, color, moves, id):
+        super().__init__(tile, color, moves, id)
         self.worth = 9
         self.name = "queen"
 
     def find_Moves(self):
-        return super().find_Moves()
+        return Rook.find_Moves(self), Bishop.find_Moves(self)
 
 
 
 
 class King(piece):
-    def __init__(self, tile, color, moves):
-        super().__init__(tile, color, moves)
+    def __init__(self, tile, color, moves, id):
+        super().__init__(tile, color, moves, id)
         self.hasMoved = False
         self.inCheck = False
         self.name = "king"
     
     def in_check(self, tileXY):
-        
+        if(self.color):
+            for i in Black_MovesList:
+                if tileXY in i:
+                    return True
+        else:
+            for j in White_MovesList:
+                if tileXY in White_MovesList[j]:
+                    return True
         return False
 
     def find_Moves(self):
@@ -385,11 +394,25 @@ for i in range(8):
         row.append(temp)
     board.append(row)
 
+White_MovesList = {} #key is the ID assigned to each piece. T/F + P/N/B/R/Q/K + 1-8 if needed
+Black_MovesList = {}
+
 #testing
-board[6][3].piece = Knight(board[6][3], False, [])
-board[3][1].piece = Pawn(board[3][1], True, [])
-board[2][6].piece = Queen(board[2][6], False, [])
-board[2][6].piece.find_Moves()
+board[6][3].piece = Knight(board[6][3], False, [], "TN1")
+board[3][1].piece = Pawn(board[3][1], True, [], "TP1")
+#board[5][5].piece = King(board[5][5], False, [], "FK0")
+board[2][6].piece = Queen(board[2][6], False, [], "FQ0")
+
+for i in range(8):
+    for j in range(8):
+        if(board[i][j].piece != None):
+            if(board[i][j].piece.color):
+                White_MovesList[board[i][j].piece.id] = board[i][j].piece.find_Moves()
+            else:
+                Black_MovesList[board[i][j].piece.id] = board[i][j].piece.find_Moves()
+
+
+
 print("\n" * 5)
 print(board[2][6].piece.moves)
 
