@@ -4,14 +4,17 @@
 #and i can train it myself by having it make a move and seeing if i'd play said move
 #from contextlib import nullcontext
 #import tensorflow as tf
-import numpy as np
-import matplotlib.pyplot as plt
+#import numpy as np
+#import matplotlib.pyplot as plt
 
 #have to download my chess.com archive
 #learn how to find file paths in drive
 
 #create chess game
 #filter data, what color am I? my moves, oponent's moves, winner, method of win etc
+
+import tkinter as tk
+
 
 #creating the chess game
 class tile():
@@ -331,7 +334,6 @@ class Queen(Bishop, Rook):
 
 
 
-
 class King(piece):
     def __init__(self, tile, color, moves, id):
         super().__init__(tile, color, moves, id)
@@ -340,14 +342,15 @@ class King(piece):
         self.name = "king"
     
     def in_check(self, tileXY):
-        if(self.color):
-            for i in Black_MovesList:
-                if tileXY in i:
-                    return True
-        else:
-            for j in White_MovesList:
-                if tileXY in White_MovesList[j]:
-                    return True
+        #if(self.color):
+            #for i in Black_MovesList:
+                #if tileXY in i:
+                    #continue
+                    #return True
+        #else:
+            #for j in White_MovesList:
+                #if tileXY in White_MovesList[j]:
+                    #return True
         return False
 
     def find_Moves(self):
@@ -400,7 +403,7 @@ Black_MovesList = {}
 #testing
 board[6][3].piece = Knight(board[6][3], False, [], "TN1")
 board[3][1].piece = Pawn(board[3][1], True, [], "TP1")
-#board[5][5].piece = King(board[5][5], False, [], "FK0")
+board[5][5].piece = King(board[5][5], False, [], "FK0")
 board[2][6].piece = Queen(board[2][6], False, [], "FQ0")
 
 for i in range(8):
@@ -412,9 +415,23 @@ for i in range(8):
                 Black_MovesList[board[i][j].piece.id] = board[i][j].piece.find_Moves()
 
 
+abc = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+abc = abc[::-1]
 
-print("\n" * 5)
-print(board[2][6].piece.moves)
+window = tk.Tk()
+window.title("Chess Game")
+for x in range(8):
+    window.rowconfigure(x, weight=1, minsize=50)
+    window.columnconfigure(x, weight =1, minsize=50)
+    for y in range(8):
+        frame = tk.Frame(master=window, relief=tk.RAISED, borderwidth = 0)
+        frame.grid(row=x, column=y)
+        lbl = tk.Label(master=frame, text=abc[x] +str(y+1))
+        lbl.pack()
+
+window.mainloop()
+
+
 
 #new game (creates all the pieces in they're correct spots)
 #turn (recursive function called in play game)
